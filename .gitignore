@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/USBBusFilter/.vs/USBBusFilter
+/USBBusFilter/USBBusFilter/x64/Debug
+/USBBusFilter/x64/Debug

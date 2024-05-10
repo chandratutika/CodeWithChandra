@@ -1,0 +1,85 @@
+;
+; Installation file for a Generic Upper Filter. For KMDF Filters
+; it is assumed that the Framework is already installed and present
+;
+; Copyright (c) OSR Open Systems Resources, Inc.
+;
+; NOTE: We specifically do not want to specify PnpLockdown=1 
+;       to make it easier to replace our driver (by copying over the executable)
+;       during testing/experimentation.
+;
+[Version]
+Signature   = "$Windows NT$"
+Class       = %ClassNameToFilter%   ; Be sure the class NAME and ... 
+ClassGUID   = %ClassGUIDToFilter%   ; ... the class GUID agree.
+Provider    = %Provider%
+DriverVer   = PnpLockdown=1 
+CatalogFile = USBBusFilter.cat
+
+;
+; General installation section
+;
+;[Manufacturer]
+;%StdMfg%=Standard,NT$ARCH$
+
+;[Standard.NT$ARCH$]
+;%USBBusFilterInstall.DeviceDesc%=USBBusFilterInstall, USB\ROOT_HUB30&VID8086&PID7A60
+;%USBBusFilterInstall.DeviceDesc%=USBBusFilterInstall, USB\ROOT_HUB30&VID8086&PID1138
+;%USBBusFilterInstall.DeviceDesc%=USBBusFilterInstall, USB\VID_1FC9&PID_009B
+
+[USBBusFilterInstall]
+CopyFiles = USBBusFilterFiles
+
+[USBBusFilterFiles]
+USBBusFilter.sys
+
+[USBBusFilterInstall.HW]
+Addreg    = USBBusFilterInstall_AddReg
+
+[DestinationDirs]
+USBBusFilterFiles = 12
+
+[USBBusFilterInstall_AddReg]
+HKR,,"UpperFilters",0x00010000,"USBBusFilter"
+
+;HKLM, System\CurrentControlSet\Control\Class\%ClassGUIDToFilter%, UpperFilters, 0x00010008, %DriverName%     
+
+;
+; Service installation section
+;
+
+[USBBusFilterInstall.Services]
+AddService = USBBusFilter, 0x00000002, USBBusFilter.Service.Install
+
+[USBBusFilter.Service.Install]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
+ServiceType      = 1                            ;SERVICE_KERNEL_DRIVER
+StartType        = 0                            ;SERVICE_BOOT_START 
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+;AddReg           = KMDFVerifierAddReg
+
+
+[SourceDisksFiles]
+USBBusFilter.sys=1
+
+[SourceDisksNames]
+1 = %DiskId1%
+
+;
+; Localizable Strings
+;
+
+[Strings]
+;
+
+ClassGUIDToFilter       = "{36FC9E60-C465-11CF-8056-444553540000}"
+ClassNameToFilter       = "USB" ; MUST AGREE WITH ABOVE 
+Provider                = "HP, Inc."
+ServiceDescription      = "USBBusFilter Filter"
+ServiceName             = "USBBusFilter"
+DriverName              = "USBBusFilter"
+DiskId1                 = "USBBusFilter Upper Filter Installation Disk"
+USBBusFilterInstall.DeviceDesc = "USBBusFilter"
+StdMfg                   = "(Standard system devices)"
